@@ -1,0 +1,73 @@
+{
+  "job": {
+    "setting": {
+      "speed": {
+        "recordNum":100000,
+        "byteNum": 10240000,
+        "channel": 5
+      },
+      "errorLimit": {
+        "record": 0,
+        "percentage": 0.02
+      }
+    },
+    "content": [
+      {
+        "reader": {
+          "name": "mysqlreader",
+          "parameter": {
+            "username": "root",
+            "password": "ABC123.abc123",
+            "column": [
+              "pid",
+              "order_count",
+              "user_count",
+              "amt"
+            ],
+            "splitPk": "pid",
+            "connection": [
+              {
+                "table": [
+                  "order_tj"
+                ],
+                "jdbcUrl": [
+                  "jdbc:mysql://doitedu01:3306/doit50"
+                ]
+              }
+            ]
+          }
+        },
+        "writer": {
+          "name": "hdfswriter",
+          "parameter": {
+            "defaultFS": "hdfs://doitedu01:8020",
+            "fileType": "orc",
+            "path": "/user/hive/warehouse/ods.db/order_tj",
+            "fileName": "xxxx",
+            "column": [
+              {
+                "name": "pid",
+                "type": "int"
+              },
+              {
+                "name": "order_count",
+                "type": "int"
+              },
+              {
+                "name": "user_count",
+                "type": "int"
+              },
+              {
+                "name": "amt",
+                "type": "string"
+              }
+            ],
+            "writeMode": "append",
+            "fieldDelimiter": "\t",
+            "compress": "snappy"
+          }
+        }
+      }
+    ]
+  }
+}

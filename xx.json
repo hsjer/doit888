@@ -1,0 +1,107 @@
+{
+  "rule_id": 1,
+  "static_profile_condition": [
+    {
+      "tag_name": "职业",
+      "operator": "=",
+      "tag_value": [
+        "宝妈"
+      ]
+    },
+    {
+      "tag_name": "年龄",
+      "operator": "BETWEEN",
+      "tag_value": [
+        20,
+        30
+      ]
+    },
+    {
+      "tag_name": "月消费额",
+      "operator": ">",
+      "tag_value": [
+        1000
+      ]
+    }
+  ],
+  "realtime_profile_condition": [
+    {
+      "event_id": "A",
+      "props": [
+        {
+          "prop_name": "p1",
+          "operator": ">=",
+          "prop_value": 50
+        },
+        {
+          "prop_name": "p3",
+          "operator": "=",
+          "prop_value": 120
+        }
+      ],
+      "operator": ">=",
+      "event_cnt": 3
+    },
+    {
+      "operator": ">=",
+      "seq_cnt": 2,
+      "seq_events": [
+        {
+          "event_id": "A",
+          "props": [
+            {
+              "prop_name": "p1",
+              "operator": ">=",
+              "prop_value": 50
+            },
+            {
+              "prop_name": "p3",
+              "operator": "=",
+              "prop_value": 120
+            }
+          ]
+        },
+        {
+          "event_id": "A",
+          "props": [
+            {
+              "prop_name": "p1",
+              "operator": ">=",
+              "prop_value": 50
+            },
+            {
+              "prop_name": "p3",
+              "operator": "=",
+              "prop_value": 120
+            }
+          ]
+        },
+        {
+          "event_id": "A",
+          "props": [
+            {
+              "prop_name": "p1",
+              "operator": ">=",
+              "prop_value": 50
+            },
+            {
+              "prop_name": "p3",
+              "operator": "=",
+              "prop_value": 120
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fire_event": {
+    "event_id": "X",
+    "props": [
+      {
+        "prop_name": "p1",
+        "operator": "=",
+        "prop_value":"v1"
+      }
+    ]
+  }
+}

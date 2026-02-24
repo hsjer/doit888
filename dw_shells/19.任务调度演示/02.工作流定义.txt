@@ -1,0 +1,44 @@
+## 任务1[shell]:创建目录
+hdfs dfs -rm -r /test_data/${dt}
+hdfs dfs -mkdir -p /test_data/${dt}
+hdfs dfs -put /root/aaa.txt /test_data/${dt}/
+
+-- 自定义参数
+-- dt : $[yyyyMMdd-1]
+
+
+
+## 任务2[sql]：数据入库
+load data inpath ${data_path} into table tmp.ods_dolphin_test partition(dt=${path_dt})
+
+-- 自定义参数
+-- path_dt : $[yyyyMMdd-1]
+-- data_path : /test_data/$[yyyyMMdd-1]
+
+
+
+## 任务3[sql]：ods加工到dwd
+insert into table tmp.dwd_dolphin_test partition(dt=${dt})
+select  id,name,event_id,action_time,device_type,title
+from (
+select  *,
+row_number() over(partition by md5(concat_ws('',cast(id as string),name,event_id,cast(action_time as string),device_type,title)) ) as rn
+
+from tmp.ods_dolphin_test where dt=${dt}
+) o
+where rn=1
+
+-- 自定义参数
+-- dt： $[yyyyMMdd-1]
+
+
+
+## 任务4[spark]:用户热词top50
+spark jar
+主类： top.doe.dataware.DolphinTop50Word
+主程序参数: ${dt}
+--dolphin自定义参数:  dt： $[yyyyMMdd-1]
+
+
+
+

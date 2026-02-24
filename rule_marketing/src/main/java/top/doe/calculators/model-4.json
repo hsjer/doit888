@@ -1,0 +1,26 @@
+{
+  "rule_id": 2,
+  "model_id": 4,
+  "static_profile_condition": [
+    {
+      "tag_name": "age",
+      "tag_oper": ">",
+      "tag_value": "30"
+    },
+    {
+      "tag_name": "gender",
+      "tag_oper": "=",
+      "tag_value": "male"
+    }
+  ],
+  "realtime_profile_condition":{
+    "event_id":"B",
+    "min_event_cnt":4,
+    "prop_name":"p1",
+    "keyword": "咖啡",
+    "min_cnt": 3
+  },
+  "fire_condition": {
+    "event_id":"X"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "rule_id": 4,
+  "model_id": 3,
+  "static_profile_condition": [
+    {
+      "tag_name": "age",
+      "tag_oper": ">",
+      "tag_value": "30"
+    },
+    {
+      "tag_name": "gender",
+      "tag_oper": "=",
+      "tag_value": "male"
+    }
+  ],
+  "cross_range_realtime_condition": [
+    {
+      "start_time": 1730390400000,
+      "end_time": -1,
+      "seq_cnt_oper": ">=",
+      "seq_cnt_value": 3,
+      "cross_condition_id": "c1",
+      "event_seq": [
+        {
+          "event_id": "A",
+          "props": [
+            {
+              "prop_name": "p1",
+              "prop_oper": "contain",
+              "prop_value": "咖啡"
+            }
+          ]
+        },
+        {
+          "event_id": "E",
+          "props": [
+            {
+              "prop_name": "p2",
+              "prop_oper": ">",
+              "prop_value": 200
+            }
+          ]
+        },
+        {
+          "event_id": "Q",
+          "props": []
+        }
+      ]
+
+    },
+    {
+      "start_time": 1730390400000,
+      "end_time": -1,
+      "event_id": "W",
+      "event_cnt_oper": ">",
+      "event_cnt_value": 4,
+      "prop_name": "p1",
+      "prop_oper": ">=",
+      "prop_avg_value": 150,
+      "cross_condition_id": "c2"
+    }
+  ],
+  "fire_event_condition": {
+    "event_id": "X",
+    "prop_name": "p4",
+    "prop_oper": ">",
+    "prop_value": 20
+
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "job": {
+    "setting": {
+      "speed": {
+        "recordNum":100000,
+        "byteNum": 10240000,
+        "channel": 1
+      },
+      "errorLimit": {
+        "record": 0,
+        "percentage": 0.02
+      }
+    },
+    "content": [
+      {
+        "reader": {
+          "name": "mysqlreader",
+          "parameter": {
+            "username": "root",
+            "password": "ABC123.abc123",
+            "column": [
+              "*"
+            ],
+            "splitPk": "id",
+            "where": "substring(modify_time,1,10)='{TARGET_DT}'",
+            "connection": [
+              {
+                "table": [
+                  "oms_order"
+                ],
+                "jdbcUrl": [
+                  "jdbc:mysql://doitedu01:3306/realtime_dw"
+                ]
+              }
+            ]
+          }
+        },
+        "writer": {
+          "name": "hdfswriter",
+          "parameter": {
+            "defaultFS": "hdfs://doitedu01:8020",
+            "fileType": "orc",
+            "path": "/user/hive/warehouse/ods.db/oms_order_incr/dt={TARGET_DT}",
+            "fileName": "oms_order_",
+            "column": [
+              {"name":"id","type":"bigint"}
+            ,{"name":"member_id","type":"bigint"}
+            ,{"name":"coupon_id","type":"bigint"}
+            ,{"name":"order_sn","type":"string"}
+            ,{"name":"create_time","type":"timestamp"}
+            ,{"name":"member_username","type":"string"}
+            ,{"name":"total_amount","type":"string"}
+            ,{"name":"pay_amount","type":"string"}
+            ,{"name":"freight_amount","type":"string"}
+            ,{"name":"promotion_amount","type":"string"}
+            ,{"name":"integration_amount","type":"string"}
+            ,{"name":"coupon_amount","type":"string"}
+            ,{"name":"discount_amount","type":"string"}
+            ,{"name":"pay_type","type":"int"}
+            ,{"name":"source_type","type":"int"}
+            ,{"name":"status","type":"int"}
+            ,{"name":"order_type","type":"int"}
+            ,{"name":"delivery_company","type":"string"}
+            ,{"name":"delivery_sn","type":"string"}
+            ,{"name":"auto_confirm_day","type":"int"}
+            ,{"name":"integration","type":"int"}
+            ,{"name":"growth","type":"int"}
+            ,{"name":"promotion_info","type":"string"}
+            ,{"name":"bill_type","type":"int"}
+            ,{"name":"bill_header","type":"string"}
+            ,{"name":"bill_content","type":"string"}
+            ,{"name":"bill_receiver_phone","type":"string"}
+            ,{"name":"bill_receiver_email","type":"string"}
+            ,{"name":"receiver_name","type":"string"}
+            ,{"name":"receiver_phone","type":"string"}
+            ,{"name":"receiver_post_code","type":"string"}
+            ,{"name":"receiver_province","type":"string"}
+            ,{"name":"receiver_city","type":"string"}
+            ,{"name":"receiver_region","type":"string"}
+            ,{"name":"receiver_detail_address","type":"string"}
+            ,{"name":"note","type":"string"}
+            ,{"name":"confirm_status","type":"int"}
+            ,{"name":"delete_status","type":"int"}
+            ,{"name":"use_integration","type":"int"}
+            ,{"name":"payment_time","type":"timestamp"}
+            ,{"name":"delivery_time","type":"timestamp"}
+            ,{"name":"receive_time","type":"timestamp"}
+            ,{"name":"comment_time","type":"timestamp"}
+            ,{"name":"modify_time","type":"timestamp"}
+            ],
+            "writeMode": "append",
+            "fieldDelimiter": "\t",
+            "compress": "snappy"
+          }
+        }
+      }
+    ]
+  }
+}

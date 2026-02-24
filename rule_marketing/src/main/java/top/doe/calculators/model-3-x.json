@@ -1,0 +1,70 @@
+{
+  "rule_id": 1,
+  "cross_range_realtime_condition": [
+    {
+      "start_time": 1730401052000,
+      "seq_cnt_value": "3",
+      "end_time": -1,
+      "seq_cnt_oper": ">=",
+      "event_seq": [
+        {
+          "event_id": "A",
+          "props": [
+            {
+              "prop_name": "p1",
+              "prop_value": "10",
+              "prop_type": "value",
+              "prop_oper": ">"
+            }
+          ]
+        },
+        {
+          "event_id": "B",
+          "props": [
+            {
+              "prop_name": "p1",
+              "prop_value": "10",
+              "prop_type": "value",
+              "prop_oper": ">"
+            }
+          ]
+        },
+        {
+          "event_id": "C",
+          "props": []
+        }
+      ],
+      "cross_condition_id": "c1"
+    },
+    {
+      "prop_name": "p1",
+      "start_time": 1732101344000,
+      "prop_avg_value": "100",
+      "event_id": "D",
+      "event_cnt_oper": ">=",
+      "end_time": -1,
+      "prop_oper": ">=",
+      "event_cnt_value": "3",
+      "cross_condition_id": "c2"
+    }
+  ],
+  "fire_event_condition": {
+    "prop_name": "p1",
+    "event_id": "E",
+    "prop_value": "66",
+    "prop_oper": "="
+  },
+  "model_id": 3,
+  "static_profile_condition": [
+    {
+      "tag_value": "30",
+      "tag_oper": "=",
+      "tag_name": "age"
+    },
+    {
+      "tag_value": "male",
+      "tag_oper": "=",
+      "tag_name": "gender"
+    }
+  ]
+}

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数仓管理平台</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <!-- 左侧菜单栏 -->
+    <div class="sidebar">
+        <ul>
+            <li class="menu-item">
+                <span>数仓概览</span>
+                <ul class="submenu">
+                    <li>概览1</li>
+                    <li>概览2</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>数据源管理</span>
+                <ul class="submenu">
+                    <li>数据源1</li>
+                    <li>数据源2</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>数据表管理</span>
+                <ul class="submenu">
+                    <li>表管理1</li>
+                    <li>表管理2</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>数据质量</span>
+                <ul class="submenu">
+                    <li id="quality-report">质量报告</li>
+                    <li id="add-rule">新增规则</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>数据稽查</span>
+                <ul class="submenu">
+                    <li>稽查1</li>
+                    <li>稽查2</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>新增规则</span>
+                <ul class="submenu">
+                    <li id="model1">模型1</li>
+                    <li id="model2">模型2</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 右侧功能区 -->
+    <div class="content" id="page-content">
+        <h1>欢迎来到数仓管理平台</h1>
+        <p>请选择左侧菜单以查看内容。</p>
+    </div>
+</div>
+
+<!-- 包含质量报告内容的模板 -->
+<script type="text/template" id="quality-report-template">
+    <h1>质量报告</h1>
+    <form id="report-form">
+        <label for="report-select">选择质量报表：</label>
+        <select id="report-select">
+            <option value="">请选择报表</option>
+            <option value="log-report">日志采集报告</option>
+        </select>
+
+        <label for="report-date">选择日期：</label>
+        <input type="date" id="report-date"/>
+
+        <button type="button" id="view-report-btn">查看</button>
+    </form>
+
+    <div id="report-content">
+        <!-- 表格1：日志服务器信息 -->
+        <div id="table1-container" class="table-container" style="display: none;">
+            <h2>日志服务器信息</h2>
+            <table id="table1">
+                <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>日志服务器</th>
+                    <th>文件数</th>
+                    <th>日志行数</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- 表格2：HDFS文件信息 -->
+        <div id="table2-container" class="table-container" style="display: none;">
+            <h2>HDFS 文件信息</h2>
+            <table id="table2">
+                <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>HDFS 文件数</th>
+                    <th>文件总行数</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- 表格3：源端与去重行数 -->
+        <div id="table3-container" class="table-container" style="display: none;">
+            <h2>源端与去重行数信息</h2>
+            <table id="table3">
+                <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>源端总行数</th>
+                    <th>落地去重总行数</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+
+    </div>
+    <!-- 健康状态条 -->
+    <div id="health-status-bar"
+         style="display: none; margin-top: 20px; padding: 10px; color: white; font-weight: bold;">
+        <!-- 健康状态信息将动态填充 -->
+    </div>
+
+</script>
+
+<!-- 包含新增规则内容的模板 -->
+<script type="text/template" id="add-rule-template">
+    <h1>新增规则</h1>
+    <form id="rule-form">
+        <label for="rule-select">选择规则：</label>
+        <select id="rule-select">
+            <!-- <option value="">请选择规则</option>-->
+            <option value="0">NULL值检查</option>
+            <option value="1">最大值检查</option>
+            <option value="2">最小值检查</option>
+            <option value="3">sum检查</option>
+        </select>
+
+        <label for="target-table">目标表：</label>
+        <input type="text" id="target-table" placeholder="请输入目标表名"/>
+
+        <label for="target-field">目标字段：</label>
+        <input type="text" id="target-field" placeholder="请输入目标字段名"/>
+
+        <button type="button" id="submit-dqrule-btn">提交</button>
+    </form>
+</script>
+
+<!-- 模型1对应的右侧功能区 -->
+<script type="text/template" id="model1-template">
+
+    <h1>规则模型1-定制平台</h1>
+    <div class="divider1"></div>
+    <!-- 人群圈选表单 -->
+    <h2>人群圈选</h2>
+    <form id="crowd-selection-form">
+        <div id="condition-container">
+            <!-- 动态添加条件的容器 -->
+        </div>
+        <div>
+            <button type="button" id="add-condition-btn">添加条件</button>
+        </div>
+        <div>
+            <button type="button" id="submit-crowd-selection-btn">预圈选</button>
+            <div id="result" class="crowd-select-result"></div>
+        </div>
+    </form>
+
+    <div class="divider2"></div>
+
+    <!-- 规则参数表单 -->
+    <h2>规则参数</h2>
+    <form id="rule-parameters-form">
+        <div class="form-row">
+            <label for="start-time">起始时间：</label>
+            <input type="datetime-local" id="start-time"/>
+
+            <label for="end-time">结束时间：</label>
+            <input type="datetime-local" id="end-time"/>
+        </div>
+
+        <div class="form-row">
+            <label for="event-select">触发事件Event：</label>
+            <select id="event-select">
+                <option value="">加载中...</option>
+            </select>
+        </div>
+
+        <div id="props-container" class="form-row" style="display:none;">
+            <label for="prop-select">选择Props：</label>
+            <select id="prop-select">
+                <option value="">请选择一个属性</option>
+            </select>
+            <input type="text" id="prop-value" placeholder="请输入值"/>
+            <button type="button" id="add-prop-btn">+</button>
+        </div>
+
+
+        <button type="button" id="submit-rule-btn">提交规则</button>
+    </form>
+
+</script>
+
+
+<!-- 模型2对应的右侧功能区 -->
+<script type="text/template" id="model2-template">
+
+    <h1>规则模型2-定制平台</h1>
+    <div class="divider2"></div>
+    <form>
+        <!-- 人群圈选 -->
+        <h2>人群圈选</h2>
+        <!-- 已选容器 -->
+        <div class="boxed">
+            <div class="title">已选条件</div>
+            <div class="content" id="tag-s-container">
+                <!--<div id="tag-s-1">
+                    <input name="tag_name" value="tag_name" class="inline"/>
+                    <input class="inline" name="tag_oper" value="tag_oper"/>
+                    <input class="inline" name="tag_value" value="tag_value"/>
+                    <button class="inline" name="tag-s-delete">删除</button>
+                 </div> -->
+            </div>
+        </div>
+
+        <!-- 选择  -->
+        <div id="tag-select">
+            <div class="inline " style="margin-top: 40px">选择标签</div>
+            <select class="inline" id="tag-name-select">
+                <option value="age">年龄</option>
+                <option value="gender">性别</option>
+                <option value="city">城市</option>
+                <option value="job">职业</option>
+                <option value="m_act">月活天数</option>
+                <option value="m_buy">月购金额</option>
+            </select>
+            <select class="inline" id="tag-oper-select">
+                <option value="="> =</option>
+                <option value="!="> !=</option>
+                <option value=">"> ></option>
+                <option value=">="> >=</option>
+                <option value="<"> <</option>
+                <option value="<="> <=</option>
+                <option value="contain"> contain</option>
+            </select>
+            <input class="inline" id="tag-value-input" name="tag-value" value="" placeholder="输入值">
+            <input type="button" name="添加" id="tag-con-add" value="添加"/>
+
+            <div>
+                <button type="button" id="crowd-pre">人群预估</button>
+                <input type="text" id="crowd-pre-value" value="" disabled class="inline" style="color: #ff5733"/>
+            </div>
+        </div>
+
+
+        <div class="divider1"></div>
+        <!-- 动态画像 -->
+        <h2>动态画像</h2>
+        <!-- 动态画像条件容器 -->
+        <div id="real-con-container">
+            <!--<div>
+            <input class="inline" name="real-con-event-name" value=""/>
+            <input class="inline" name="real-con-prop-name" value=""/>
+            <input class="inline" name="real-con-prop-value-type" value=""/>
+            <input class="inline" name="real-con-prop-oper" value=""/>
+            <input class="inline" name="real-con-prop-value" value=""/>
+            <button class="inline" name="real-con-delete">删除</button>
+            </div>-->
+        </div>
+
+
+        <!-- 动态画像事件定义 -->
+        <div id="real-con-prop">
+            <div>
+                <div class="inline">选择事件</div>
+                <select id="real-con-event-select" class="inline">
+                    <option value="A"> A_Event</option>
+                    <option value="B"> B_Event</option>
+                    <option value="C"> C_Event</option>
+                    <option value="D"> D_Event</option>
+                    <option value="E"> E_Event</option>
+                </select>
+                <button type="button" id="real-con-add-btn">确认条件</button>
+            </div>
+
+            <!-- 动态画像事件 属性定义 -->
+            <div class="inline">选择属性</div>
+            <select class="inline" id="real-con-prop-select">
+                <option value="p1">p1</option>
+                <option value="p2">p2</option>
+                <option value="p3">p3</option>
+                <option value="p4">p4</option>
+            </select>
+            <select class="inline" id="real-con-prop-type-select">
+                <option value="value">value</option>
+                <option value="max">max</option>
+                <option value="min">min</option>
+                <option value="sum">sum</option>
+                <option value="avg">avg</option>
+            </select>
+            <select class="inline" id="real-con-prop-oper-select">
+                <option value="="> =</option>
+                <option value="!="> !=</option>
+                <option value=">"> ></option>
+                <option value=">="> >=</option>
+                <option value="<"> <</option>
+                <option value="<="> <=</option>
+                <option value="contain"> contain</option>
+            </select>
+
+            <input class="inline" id="real-con-prop-value" value="" placeholder="请输入值">
+            <button class="inline" id="real-con-prop-add" type="button"> 添加</button>
+            <!-- 动态画像条件 属性容器 -->
+            <div id="real-con-prop-container">
+                <!--<div>
+                    <input class="inline" name="real-con-prop-name" value=""/>
+                    <input class="inline" name="real-con-prop-value-type" value=""/>
+                    <input class="inline" name="real-con-prop-oper" value=""/>
+                    <input class="inline" name="real-con-prop-value" value=""/>
+                    <button class="inline" name="real-con-prop-delete">删除</button>
+                </div>
+                <div>
+                    <input class="inline" name="real-con-prop-name" value=""/>
+                    <input class="inline" name="real-con-prop-value-type" value=""/>
+                    <input class="inline" name="real-con-prop-oper" value=""/>
+                    <input class="inline" name="real-con-prop-value" value=""/>
+                    <button class="inline" name="real-con-prop-delete">删除</button>
+                </div>-->
+            </div>
+        </div>
+
+
+        <div class="divider1"></div>
+        <!-- 触发事件 -->
+        <h2>触发事件</h2>
+        <div id="fire-con-prop">
+            <div class="inline">选择事件</div>
+            <select id="fire-con-select" class="inline">
+                <option value="A"> A_EVENT</option>
+                <option value="B"> B_EVENT</option>
+                <option value="C"> C_EVENT</option>
+                <option value="D"> D_EVENT</option>
+                <option value="E"> E_EVENT</option>
+                <option value="F"> F_EVENT</option>
+            </select>
+            <div class="inline">选择属性</div>
+            <select id="fire-con-prop-select" class="inline">
+                <option value="p1">p1</option>
+                <option value="p2">p2</option>
+                <option value="p3">p3</option>
+                <option value="p4">p4</option>
+            </select>
+
+            <select id="fire-con-oper-select" class="inline">
+                <option value="="> =</option>
+                <option value="!="> !=</option>
+                <option value=">"> ></option>
+                <option value=">="> >=</option>
+                <option value="<"> <</option>
+                <option value="<="> <=</option>
+                <option value="contain"> contain</option>
+            </select>
+
+            <input class="inline" id="fire-con-value" name="fire-prop-value" value="" placeholder="输入值">
+            <!--<button class="inline" id="fire-prop-con-add"> 确认</button>-->
+
+        </div>
+        <div>
+            <button id="submit-model2-btn" type="button"> 提交规则</button>
+        </div>
+        <div style="height: 600px">
+
+        </div>
+    </form>
+
+
+</script>
+
+
+<script src="scripts.js"></script>
+</body>
+</html>

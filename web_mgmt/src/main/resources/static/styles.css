@@ -1,0 +1,207 @@
+/* 基础样式 */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    height: auto;
+}
+
+/* 左侧菜单栏样式 */
+.sidebar {
+    width: 250px;
+    background-color: #333;
+    color: #fff;
+    padding-top: 20px;
+    box-sizing: border-box;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu-item > span {
+    display: block;
+    padding: 15px;
+    cursor: pointer;
+}
+
+.menu-item > span:hover {
+    background-color: #444;
+}
+
+.submenu {
+    display: none;
+    background-color: #444;
+}
+
+.submenu li {
+    padding: 10px 30px; /* 左侧缩进 */
+    cursor: pointer;
+}
+
+.submenu li:hover {
+    background-color: #555;
+}
+
+.divider1 {
+   /* border: #dddddd 3px solid;*/
+    border-top: darkseagreen solid 2px;
+    margin-bottom: 40px; /* 调整上下间距 */
+    margin-top: 40px; /* 调整上下间距 */
+    width: 300px;
+}
+
+.divider2 {
+    border-top: 2px solid #3498db; /* 自定义颜色和边框宽度 */
+    margin-bottom: 40px; /* 调整上下间距 */
+    width: 600px;
+}
+
+.boxed {
+    position: relative; /* 让子元素（标题）可以通过绝对定位摆放 */
+    border: 1px solid #333; /* 添加框线 */
+    /* padding: 10px; /* 给内容适当留白 */
+    /* margin: 20px; 和外部元素保持间距 */
+    border-radius: 2px; /* 可选：圆角效果 */
+    width: 60%;
+}
+
+.boxed .title {
+    position: absolute; /* 绝对定位标题 */
+    top: -12px; /* 标题距离容器顶部的偏移量 */
+    left: 10px; /* 标题距离容器左侧的偏移量 */
+    background: #fff; /* 标题背景色 */
+    padding: 0 10px; /* 给标题文字一些留白 */
+    font-size: 14px; /* 调整标题文字大小 */
+    color: #333; /* 标题文字颜色 */
+    font-weight: bold; /* 标题加粗 */
+}
+
+
+/* 右侧功能区样式 */
+.content {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #f4f4f4;
+}
+
+#page-content h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    max-width: fit-content(50%);
+}
+
+/* 质量报告表格样式 */
+.table-container {
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* 预圈选样式 */
+#submit-crowd-selection-btn, #result {
+    display: inline-block;
+    vertical-align: bottom; /* 垂直居中 */
+}
+
+#submit-crowd-selection-btn {
+    margin-right: 20px; /* 给按钮和div之间添加一点间距 */
+}
+
+.crowd-select-result {
+    font-size: 20px; /* 设置字号 */
+    color: #ff5733;  /* 设置文本颜色 */
+}
+
+
+
+
+/* 表单布局 */
+#report-form {
+    margin-bottom: 20px;
+}
+
+#report-form label,
+#report-form select,
+#report-form input[type="date"],
+#report-form button {
+    margin-right: 10px;
+}
+
+/* 健康状态条样式 */
+#health-status-bar {
+    border-radius: 5px;
+    text-align: center;
+}
+
+
+
+/* 人群圈选表单样式 */
+#condition-container {
+    margin-bottom: 20px;
+}
+
+.condition-row {
+    margin-bottom: 10px;
+}
+
+button {
+    margin-left: 10px;
+}
+
+/* 规则参数表单样式 */
+#rule-parameters-form {
+    margin-top: 30px;
+}
+
+.form-row {
+    margin-bottom: 20px;
+}
+
+.form-row label {
+    margin-right: 10px;
+}
+
+#event-select {
+    width: 200px;
+}
+
+button {
+    margin-top: 20px;
+}
+
+#props-container .prop-row {
+    margin-top: 10px;
+}
+
+#props-container .prop-row input {
+    margin-right: 10px;
+}
+
+.inline {
+    display: inline-block;
+    margin-right: 10px; /* 调整间距 */
+}

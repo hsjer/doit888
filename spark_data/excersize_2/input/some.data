@@ -1,0 +1,5 @@
+{"id":1,"name":"aa",courses:[{"id":1,"name":"java","score":80.0},{"id":2,"name":"python","score":99.0}]}
+{"id":2,"name":"bb",courses:[{"id":1,"name":"spark","score":90.0},{"id":2,"name":"flink","score":80.0}]}
+{"id":3,"name":"cc",courses:[{"id":1,"name":"hive","score":80.0},{"id":2,"name":"kafka","score":92.0}]}
+{"id":4,"name":"dd",courses:[{"id":1,"name":"java","score":82.0},{"id":2,"name":"python","score":85.0}]}
+{"id":5,"name":"ee",courses:[{"id":1,"name":"hive","score":81.0},{"id":2,"name":"flume","score":88.0}]}

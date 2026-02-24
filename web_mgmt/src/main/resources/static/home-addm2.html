@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数仓管理平台</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <!-- 左侧菜单栏 -->
+    <div class="sidebar">
+        <ul>
+            <li class="menu-item">
+                <span>数仓概览</span>
+                <ul class="submenu">
+                    <li>概览1</li>
+                    <li>概览2</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>数据源管理</span>
+                <ul class="submenu">
+                    <li>数据源1</li>
+                    <li>数据源2</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>数据表管理</span>
+                <ul class="submenu">
+                    <li>表管理1</li>
+                    <li>表管理2</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>数据质量</span>
+                <ul class="submenu">
+                    <li id="quality-report">质量报告</li>
+                    <li id="add-rule">新增规则</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>数据稽查</span>
+                <ul class="submenu">
+                    <li>稽查1</li>
+                    <li>稽查2</li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <span>新增规则</span>
+                <ul class="submenu">
+                    <li id="model1">模型-1</li>
+                    <li id="model2">模型-2</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 右侧功能区 -->
+    <div class="content" id="page-content">
+        <h1>欢迎来到数仓管理平台</h1>
+        <p>请选择左侧菜单以查看内容。</p>
+    </div>
+</div>
+
+<!-- 包含质量报告内容的模板 -->
+<script type="text/template" id="quality-report-template">
+    <h1>质量报告</h1>
+    <form id="report-form">
+        <label for="report-select">选择质量报表：</label>
+        <select id="report-select">
+            <option value="">请选择报表</option>
+            <option value="log-report">日志采集报告</option>
+        </select>
+
+        <label for="report-date">选择日期：</label>
+        <input type="date" id="report-date" />
+
+        <button type="button" id="view-report-btn">查看</button>
+    </form>
+
+    <div id="report-content">
+        <!-- 表格1：日志服务器信息 -->
+        <div id="table1-container" class="table-container" style="display: none;">
+            <h2>日志服务器信息</h2>
+            <table id="table1">
+                <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>日志服务器</th>
+                    <th>文件数</th>
+                    <th>日志行数</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- 表格2：HDFS文件信息 -->
+        <div id="table2-container" class="table-container" style="display: none;">
+            <h2>HDFS 文件信息</h2>
+            <table id="table2">
+                <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>HDFS 文件数</th>
+                    <th>文件总行数</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- 表格3：源端与去重行数 -->
+        <div id="table3-container" class="table-container" style="display: none;">
+            <h2>源端与去重行数信息</h2>
+            <table id="table3">
+                <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>源端总行数</th>
+                    <th>落地去重总行数</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+
+
+    </div>
+    <!-- 健康状态条 -->
+    <div id="health-status-bar" style="display: none; margin-top: 20px; padding: 10px; color: white; font-weight: bold;">
+        <!-- 健康状态信息将动态填充 -->
+    </div>
+
+</script>
+
+<!-- 包含新增质量检查规则内容的模板 -->
+<script type="text/template" id="add-rule-template">
+    <h1>新增规则</h1>
+    <form id="rule-form">
+        <label for="rule-select">选择规则：</label>
+        <select id="rule-select">
+           <!-- <option value="">请选择规则</option>-->
+            <option value="0">NULL值检查</option>
+            <option value="1">最大值检查</option>
+            <option value="2">最小值检查</option>
+            <option value="3">sum检查</option>
+        </select>
+
+        <label for="target-table">目标表：</label>
+        <input type="text" id="target-table" placeholder="请输入目标表名" />
+
+        <label for="target-field">目标字段：</label>
+        <input type="text" id="target-field" placeholder="请输入目标字段名" />
+
+        <button type="button" id="submit-dqrule-btn">提交</button>
+    </form>
+</script>
+
+<!-- 模型1对应的右侧功能区 -->
+<script type="text/template" id="model1-template">
+
+    <h1>规则模型1-定制平台</h1>
+    <div class="divider1"></div>
+    <!-- 人群圈选表单 -->
+    <h2>人群圈选</h2>
+    <form id="crowd-selection-form">
+        <div id="condition-container">
+            <!-- 动态添加条件的容器 -->
+        </div>
+        <div>
+        <button type="button" id="add-condition-btn">添加条件</button>
+        </div>
+        <div>
+        <button type="button" id="submit-crowd-selection-btn">预圈选</button>
+        <div id="result" class="crowd-select-result"></div>
+        </div>
+    </form>
+
+    <div class="divider2"></div>
+
+    <!-- 规则参数表单 -->
+    <h2>规则参数</h2>
+    <form id="rule-parameters-form">
+        <div class="form-row">
+            <label for="start-time">起始时间：</label>
+            <input type="datetime-local" id="start-time" />
+
+            <label for="end-time">结束时间：</label>
+            <input type="datetime-local" id="end-time" />
+        </div>
+
+        <div class="form-row">
+            <label for="event-select">触发事件Event：</label>
+            <select id="event-select">
+                <option value="">加载中...</option>
+            </select>
+        </div>
+
+        <div id="props-container" class="form-row" style="display:none;">
+            <label for="prop-select">选择Props：</label>
+            <select id="prop-select">
+                <option value="">请选择一个属性</option>
+            </select>
+            <input type="text" id="prop-value" placeholder="请输入值" />
+            <button type="button" id="add-prop-btn">+</button>
+        </div>
+
+
+
+        <button type="button" id="submit-rule-btn">提交规则</button>
+    </form>
+
+</script>
+
+<!-- 模型2对应的右侧功能区 -->
+<script type="text/template" id="model2-template">
+
+    <h1>规则模型1-定制平台</h1>
+    <div class="divider1"></div>
+    <!-- 人群圈选表单 -->
+    <h2>人群圈选</h2>
+    <form id="m2-crowd-selection-form">
+        <div id="m2-condition-container">
+            <!-- 动态添加条件的容器 -->
+        </div>
+        <div>
+            <button type="button" id="m2-add-condition-btn">添加条件</button>
+        </div>
+        <div>
+            <button type="button" id="m2-submit-crowd-selection-btn">预圈选</button>
+            <div id="m2-result" class="crowd-select-result"></div>
+        </div>
+    </form>
+
+    <div class="divider2"></div>
+
+    <!-- 规则参数表单 -->
+    <h2>规则参数</h2>
+    <form id="m2-rule-parameters-form">
+        <div class="form-row">
+            <label for="start-time">起始时间：</label>
+            <input type="datetime-local" id="m2-start-time" />
+
+            <label for="end-time">结束时间：</label>
+            <input type="datetime-local" id="m2-end-time" />
+        </div>
+
+        <div class="form-row">
+            <label for="event-select">触发事件：</label>
+            <select id="m2-event-select">
+                <option value="">加载中...</option>
+            </select>
+        </div>
+
+        <div id="m2-props-container" class="form-row" style="display:none;">
+            <label for="prop-select">选择Props：</label>
+            <select id="m2-prop-select">
+                <option value="">请选择一个属性</option>
+            </select>
+            <input type="text" id="m2-prop-value" placeholder="请输入值" />
+            <button type="button" id="m2-add-prop-btn">+</button>
+        </div>
+
+
+
+        <div class="form-row">
+            <label for="event-select">统计事件：</label>
+            <select id="m2-e-event-select">
+                <option value="">加载中...</option>
+            </select>
+        </div>
+
+        <div id="m2-e-container" class="form-row" style="display:none;">
+            <label for="prop-select">选择Props：</label>
+            <select id="m2-e-prop-select">
+                <option value="">请选择一个属性</option>
+            </select>
+            <input type="text" id="m2-eprop-value" placeholder="请输入值" />
+            <button type="button" id="m2-add-eprop-btn">+</button>
+        </div>
+
+        <div class="form-row">
+            <select id="m2-e-oper-select">
+                <option value="">请选择一个属性</option>
+                <option value=">"> > </option>
+                <option value=">="> >= </option>
+            </select>
+            <input type="text" id="m2-e-value" placeholder="目标值" />
+        </div>
+
+
+
+
+
+        <button type="button" id="m2-submit-rule-btn">提交规则</button>
+    </form>
+
+</script>
+
+
+
+<script src="scripts.js"></script>
+</body>
+</html>

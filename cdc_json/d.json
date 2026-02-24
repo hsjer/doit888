@@ -1,0 +1,29 @@
+{
+  "before": {
+    "id": 5,
+    "name": "ee",
+    "gender": "male",
+    "salary": 9999.0
+  },
+  "after": null,
+  "source": {
+    "version": "1.6.4.Final",
+    "connector": "mysql",
+    "name": "mysql_binlog_source",
+    "ts_ms": 1728618061000,
+    "snapshot": "false",
+    "db": "doit50",
+    "sequence": null,
+    "table": "t_person",
+    "server_id": 1,
+    "gtid": null,
+    "file": "mysql-bin.000001",
+    "pos": 1253,
+    "row": 0,
+    "thread": null,
+    "query": null
+  },
+  "op": "d",
+  "ts_ms": 1728618061089,
+  "transaction": null
+}

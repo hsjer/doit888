@@ -1,0 +1,68 @@
+1. 每天到hdfs创建一个文件夹  /test_data/20241114
+
+2. 从文件夹中导数据到一个hive表
+
+drop table if exists tmp.ods_dolphin_test;
+create table tmp.ods_dolphin_test(
+    id int,
+    name string,
+    event_id string,
+    action_time bigint,
+    device_type string,
+    title string
+)
+partitioned by (dt string)
+row format delimited fields terminated by ','
+;
+
+
+1,aa,event_1,1000,mi6,老夫聊发少年狂左牵黄右擎苍
+1,aa,event_3,2000,mi6,老夫就是是看不惯你不惯着你
+1,aa,event_4,3000,mi6,飞流直下三千尺疑似银河落九天
+2,bb,event_1,1000,mi6,红军不怕远征难万里千山只等闲
+2,bb,event_2,1000,mi6,待到山花烂漫时她在丛中笑
+2,bb,event_3,1000,mi6,天山我才必有用千金散尽还复来
+
+
+
+load data inpath '/test_data/20241114' into table tmp.ods_dolphin_test partition(dt='20241114')
+
+
+3. 做ods到dwd的加工
+drop table if exists tmp.dwd_dolphin_test;
+create table tmp.dwd_dolphin_test(
+    id int,
+    name string,
+    event_id string,
+    action_time bigint,
+    device_type string,
+    title string
+)
+partitioned by (dt string)
+row format delimited fields terminated by ','
+;
+
+----
+insert into table tmp.dwd_dolphin_test partition(dt=${dt})
+select  id,name,event_id,action_time,device_type,title
+from (
+select  *,
+row_number() over(partition by md5(concat_ws('',cast(id as string),name,event_id,cast(action_time as string),device_type,title)) ) as rn
+
+from tmp.ods_dolphin_test where dt=${dt}
+) o
+where rn=1
+;
+
+
+4. spark任务:求每个用户的前50个热词,放入dws层表
+drop table if exists tmp.dws_dolphin_test;
+create table tmp.dws_dolphin_test(
+   id   int,
+   word string,
+   rk   bigint
+)
+partitioned by (dt string)
+stored as orc;
+
+

@@ -1,0 +1,39 @@
+{
+  "rule_id":2,
+  "static_profile_condition":[
+    {
+      "tag_name":"职业",
+      "operator":"=",
+      "tag_value":["宝妈"]
+    },
+    {
+      "tag_name":"年龄",
+      "operator":"BETWEEN",
+      "tag_value":[20,30]
+    },
+    {
+      "tag_name":"月消费额",
+      "operator":">",
+      "tag_value":[1000]
+    }
+  ],
+  "realtime_profile_condition":{
+    "event_id":"B",
+    "cnt_operator":">",
+    "event_cnt":4,
+    "prop_name":"p1",
+    "avg_prop_value":100,
+    "min_prop_value":50,
+    "max_prop_value":200
+  },
+  "fire_event": {
+    "event_id": "Y",
+    "props": [
+      {
+        "prop_name": "p2",
+        "operator": ">",
+        "prop_value":["10"]
+      }
+    ]
+  }
+}

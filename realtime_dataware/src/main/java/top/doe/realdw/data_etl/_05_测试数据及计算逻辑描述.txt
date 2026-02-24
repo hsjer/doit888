@@ -1,0 +1,75 @@
+--DWD的搜索相关事件数据
+{"user_id":3,"username":"windy","session_id":"s10","event_id":"search","action_time":1670596213000,"lat":38.089969323508726,"lng":114.35731900345093,"release_channel":"华为应用市场","device_type":"mi8","properties":{"keyword":"usb 移动固态","search_id":"sc01"},"register_phone":"18061581848","user_status":1,"register_time":"2018-08-03 16:46:38","register_gender":1,"register_birthday":"2002-03-06","register_province":"上海","register_city":"上海","register_job":"程序员","register_source_type":1,"province":"河北省","city":"石家庄市","region":"鹿泉区","page_type":"文章页","page_service":"内容服务"}
+{"user_id":3,"username":"windy","session_id":"s10","event_id":"search_return","action_time":1670596214000,"lat":38.089969323508726,"lng":114.35731900345093,"release_channel":"华为应用市场","device_type":"mi8","properties":{"keyword":"usb 移动固态","res_cnt":276,"search_id":"sc01"},"register_phone":"18061581848","user_status":1,"register_time":"2018-08-03 16:46:38","register_gender":1,"register_birthday":"2002-03-06","register_province":"上海","register_city":"上海","register_job":"程序员","register_source_type":1,"province":"河北省","city":"石家庄市","region":"鹿泉区","page_type":"文章页","page_service":"内容服务"}
+{"user_id":3,"username":"windy","session_id":"s10","event_id":"search_click","action_time":1670596216000,"lat":38.089969323508726,"lng":114.35731900345093,"release_channel":"华为应用市场","device_type":"mi8","properties":{"keyword":"usb 移动固态","search_id":"sc01","item_seq":1,"item_attr":"ad"},"register_phone":"18061581848","user_status":1,"register_time":"2018-08-03 16:46:38","register_gender":1,"register_birthday":"2002-03-06","register_province":"上海","register_city":"上海","register_job":"程序员","register_source_type":1,"province":"河北省","city":"石家庄市","region":"鹿泉区","page_type":"文章页","page_service":"内容服务"}
+{"user_id":3,"username":"windy","session_id":"s10","event_id":"search_click","action_time":1670596216000,"lat":38.089969323508726,"lng":114.35731900345093,"release_channel":"华为应用市场","device_type":"mi8","properties":{"keyword":"usb 移动固态","search_id":"sc01","item_seq":1,"item_attr":"ad"},"register_phone":"18061581848","user_status":1,"register_time":"2018-08-03 16:46:38","register_gender":1,"register_birthday":"2002-03-06","register_province":"上海","register_city":"上海","register_job":"程序员","register_source_type":1,"province":"河北省","city":"石家庄市","region":"鹿泉区","page_type":"文章页","page_service":"内容服务"}
+{"user_id":3,"username":"windy","session_id":"s10","event_id":"search_click","action_time":1670596216000,"lat":38.089969323508726,"lng":114.35731900345093,"release_channel":"华为应用市场","device_type":"mi8","properties":{"keyword":"usb 移动固态","search_id":"sc01","item_seq":1,"item_attr":"ad"},"register_phone":"18061581848","user_status":1,"register_time":"2018-08-03 16:46:38","register_gender":1,"register_birthday":"2002-03-06","register_province":"上海","register_city":"上海","register_job":"程序员","register_source_type":1,"province":"河北省","city":"石家庄市","region":"鹿泉区","page_type":"文章页","page_service":"内容服务"}
+{"user_id":4,"username":"windy","session_id":"s11","event_id":"search","action_time":1670596286000,"lat":38.089969323508726,"lng":114.35731900345093,"release_channel":"华为应用市场","device_type":"mi8","properties":{"keyword":"usb 移动固态","search_id":"sc01","item_seq":1,"item_attr":"ad"},"register_phone":"18061581848","user_status":1,"register_time":"2018-08-03 16:46:38","register_gender":1,"register_birthday":"2002-03-06","register_province":"上海","register_city":"上海","register_job":"程序员","register_source_type":1,"province":"河北省","city":"石家庄市","region":"鹿泉区","page_type":"文章页","page_service":"内容服务"}
+
+
+-- 所需的结果 （把一次搜索行为生命周期中的所有事件数据，聚合成一行）
+省,市,区,设备类型,会员等级,user_id, search_id,  keyword,     发起时间,       返回结果时间,      返回结果条数,    点击结果次数
+                            3          sc01     usb 移动固态  1670596213000    1670596214000        276              3
+
+-- 最终 结果
+省,市,区,设备类型,会员等级,user_id, search_id,  keyword,           分词,     近义词                 发起时间,       返回结果时间,      返回结果条数,    点击结果次数
+                            3          sc01     usb 移动固态    移动|固态     迷你usb固态硬盘      1670596213000    1670596214000        276              3
+
+
+
+-- 核心逻辑
+ "create temporary view agg   as   " +
+ "with tmp as (                                                                                                "+
+ " select                                                                                                       "+
+ "     user_id,                                                                                                  "+
+ "     release_channel,                                                                                          "+
+ "     province,                                                                                                 "+
+ "     city,                                                                                                     "+
+ "     region,                                                                                                   "+
+ "     if(event_id = 'search',action_time,cast(get_null() as bigint))                             as    search_time,               "+
+ "     if(event_id = 'search_return',action_time,cast(get_null() as bigint))                      as    search_return_time,        "+
+ "     if(event_id = 'search_return',cast( properties['res_cnt'] as int),cast(get_null() as int))  as    res_cnt,                   "+
+ "     if(event_id = 'search_click',1,0)                                        as    click_cnt,                 "+
+ "     properties['search_id']                                                  as    search_id,                 "+
+ "     properties['keyword']                                                    as    keyword,                   "+
+ "     rt                                                                                                        "+
+ " from dwd_events_kafka                                                                                         "+
+ " where event_id in ('search','search_return','search_click')                                                   "+
+ " )                                                                                                             "+
+ "                                                                                                               "+
+ " select                                                                                                        "+
+ "     user_id,                                                                                                  "+
+ "     release_channel,                                                                                          "+
+ "     province,                                                                                                 "+
+ "     city,region,                                                                                              "+
+ "     search_id,                                                                                                "+
+ "     keyword,                                                                                                  "+
+ "     '' as  split_words,                                                                                       "+
+ "     '' as  similar_word,                                                                                      "+
+ "     max(search_time)    as search_time,                                                                       "+
+ "     max(search_return_time) as search_return_time,                                                            "+
+ "     max(res_cnt) as res_cnt,                                                                                  "+
+ "     sum(click_cnt) as click_cnt                                                                               "+
+ " from table(                                                                                                   "+
+ "     tumble(table tmp, descriptor(rt),interval '1' minute)                                                     "+
+ " )                                                                                                             "+
+ " group by window_start,window_end,user_id,release_channel,                                                     "+
+                        " province,city,region,search_id,keyword                                                                        "
+
+
+
+
+-- 加了窗口之后，本该聚合成一条结果的，可能会被分割成多条结果，如下：
+
++----+---------+-----------------+----------+-----------+---------+------------+--------------+------------------+---------------+--------------+---------------------+---------+----------+
+| op | user_id | release_channel | province |      city |  region |  search_id |      keyword |      split_words |  similar_word |  search_time |  search_return_time | res_cnt |click_cnt |
++----+---------+-----------------+----------+-----------+---------+------------+--------------+------------------+---------------+--------------+---------------------+---------+----------+
+| +I |       3 |    华为应用市场 |   河北省 |  石家庄市 |  鹿泉区 |       sc01 | usb 移动固态 |   usb|移动|固态| |  移动固态硬盘 |1670596213000 |       NULL          |    NULL |        1 |
+| +I |       3 |    华为应用市场 |   河北省 |  石家庄市 |  鹿泉区 |       sc01 | usb 移动固态 |   usb|移动|固态| |  移动固态硬盘 | NULL         |       1670596214000 |     276 |        2 |
+
+
+-- 在doris中，利用聚合表模型，把后面几个聚合字段，选择合适的 聚合函数，即可合并成一行 ( replace_if_not_null ,sum )
++----+----------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+----------------------+----------------------+----------------------+----------------------+
+| op |              user_id |                release_channel |                       province |                           city |                         region |                      search_id |                        keyword |                    split_words |                   similar_word |          search_time |   search_return_time |              res_cnt |            click_cnt |
++----+----------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+----------------------+----------------------+----------------------+----------------------+
+| +I |                    3 |                   华为应用市场 |                         河北省 |                       石家庄市 |                         鹿泉区 |                           sc01 |                   usb 移动固态 |                 usb|移动|固态| |                   移动固态硬盘 |        1670596213000 |        1670596214000 |                  276 |                    3 |
